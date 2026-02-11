@@ -81,7 +81,7 @@
     $questionIndex++;
     $key = 'q' . $questionIndex;
 
-    // Ambil semua jawaban dari JSON answers
+    // Ambil semua jawaban
     $answers = is_array($survei->answers) ? $survei->answers : [];
 
     // Pastikan type valid
