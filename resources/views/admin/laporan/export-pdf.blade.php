@@ -331,16 +331,6 @@
         <!-- Summary Cards -->
         <div class="summary-section">
             <div class="summary-grid">
-                @if(isset($avgSkor))
-                <div class="summary-card">
-                    <div class="summary-box primary">
-                        <h3>Rata-rata Skor</h3>
-                        <div class="value">{{ number_format($avgSkor, 2) }}</div>
-                        <div class="label">dari skala 5.00</div>
-                    </div>
-                </div>
-                @endif
-                
                 <div class="summary-card">
                     <div class="summary-box success">
                         <h3>Total Respons</h3>
@@ -369,23 +359,16 @@
             <table>
                 <thead>
                     <tr>
-                        <th style="width: 4%;">No</th>
-                        <th style="width: 10%;">Mode</th>
-                        <th style="width: 20%;">Nama Pegawai</th>
-                        <th style="width: 16%;">Direktorat</th>
-                        <th style="width: 26%;">Konten Survei</th>
-                        <th style="width: 10%;" class="text-center">Skor</th>
-                        <th style="width: 14%;" class="text-center">Tanggal</th>
+                        <th style="width: 5%;">No</th>
+                        <th style="width: 12%;">Mode</th>
+                        <th style="width: 22%;">Nama Pegawai</th>
+                        <th style="width: 18%;">Direktorat</th>
+                        <th style="width: 30%;">Konten Survei</th>
+                        <th style="width: 13%;" class="text-center">Tanggal</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($surveis as $index => $survei)
-                        @php
-                            $skor = ($survei->q1 + $survei->q2 + $survei->q3 + $survei->q4 + $survei->q5 +
-                                    $survei->q6 + $survei->q7 + $survei->q8 + $survei->q9 + $survei->q10 +
-                                    $survei->q11 + $survei->q12 + $survei->q13 + $survei->q14 + $survei->q15 +
-                                    $survei->q16 + $survei->q17 + $survei->q18) / 18;
-                        @endphp
                         <tr>
                             <td class="text-center">{{ $index + 1 }}</td>
                             <td class="text-center">
@@ -401,15 +384,6 @@
                                 $judul = $survei->kontenSurvei->judul ?? 'N/A';
                                 echo mb_strlen($judul) > 50 ? mb_substr($judul, 0, 47) . '...' : $judul;
                             @endphp</td>
-                            <td class="text-center">
-                                <span class="badge 
-                                    @if($skor >= 4) badge-success
-                                    @elseif($skor >= 3) badge-warning
-                                    @else badge-danger
-                                    @endif">
-                                    {{ number_format($skor, 2) }}
-                                </span>
-                            </td>
                             <td class="text-center text-muted">{{ $survei->created_at->format('d/m/Y H:i') }}</td>
                         </tr>
                     @endforeach
@@ -417,38 +391,6 @@
             </table>
         </div>
         
-        <!-- Statistics Summary -->
-        @php
-            $allScores = $surveis->map(function($survei) {
-                return ($survei->q1 + $survei->q2 + $survei->q3 + $survei->q4 + $survei->q5 +
-                       $survei->q6 + $survei->q7 + $survei->q8 + $survei->q9 + $survei->q10 +
-                       $survei->q11 + $survei->q12 + $survei->q13 + $survei->q14 + $survei->q15 +
-                       $survei->q16 + $survei->q17 + $survei->q18) / 18;
-            });
-            
-            $skorTinggi = $allScores->count() > 0 ? $allScores->max() : 0;
-            $skorRendah = $allScores->count() > 0 ? $allScores->min() : 0;
-        @endphp
-        
-        @if($surveis->count() > 0)
-        <div class="info-section mt-20">
-            <div class="table-title" style="margin-bottom: 12px; border: none; padding: 0;">📊 Ringkasan Statistik</div>
-            <div class="info-grid">
-                <div class="info-item">
-                    <strong>Skor Tertinggi:</strong>
-                    <span class="font-bold">{{ number_format($skorTinggi, 2) }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Skor Terendah:</strong>
-                    <span class="font-bold">{{ number_format($skorRendah, 2) }}</span>
-                </div>
-                <div class="info-item">
-                    <strong>Rentang Skor:</strong>
-                    <span>{{ number_format($skorRendah, 2) }} - {{ number_format($skorTinggi, 2) }}</span>
-                </div>
-            </div>
-        </div>
-        @endif
     @else
         <!-- Empty State -->
         <div class="empty-state">

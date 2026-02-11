@@ -10,6 +10,7 @@ use App\Http\Controllers\PegawaiController;
 use App\Http\Controllers\DirektoratController;
 use App\Http\Controllers\StatusPegawaiController;
 use App\Http\Controllers\LamaBekerjaController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\Admin\AdminLaporanController;
 
 // Default login route for auth middleware
@@ -111,7 +112,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
         'destroy' => 'admin.lama-bekerjas.destroy',
     ]);
 
+    // Kategori
+    Route::resource('admin/kategoris', KategoriController::class)->names([
+        'index' => 'admin.kategoris.index',
+        'create' => 'admin.kategoris.create',
+        'store' => 'admin.kategoris.store',
+        'show' => 'admin.kategoris.show',
+        'edit' => 'admin.kategoris.edit',
+        'update' => 'admin.kategoris.update',
+        'destroy' => 'admin.kategoris.destroy',
+    ]);
+
     // Laporan
     Route::get('/admin/laporan', [AdminLaporanController::class, 'index'])->name('admin.laporan.index');
     Route::get('/admin/laporan/export', [AdminLaporanController::class, 'export'])->name('admin.laporan.export');
+    Route::get('/admin/laporan/export-excel', [AdminLaporanController::class, 'exportExcel'])->name('admin.laporan.export-excel');
 });

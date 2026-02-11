@@ -100,11 +100,22 @@
                     </div>
                 </div>
             </a>
+            <a href="{{ route('admin.kategoris.index') }}" class="glass-effect rounded-xl p-4 border border-gray-100 hover:border-indigo-200 transition-all">
+                <div class="flex items-center gap-3">
+                    <div class="bg-rose-100 p-2 rounded-lg">
+                        <i data-lucide="tag" class="w-5 h-5 text-rose-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Kategori Pertanyaan</p>
+                        <p class="text-xs text-gray-500">Kelola kategori soal</p>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 
     <!-- STATISTIK -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <div class="glass-effect rounded-2xl p-6 card-hover">
             <p class="text-sm text-gray-600">Total Survei</p>
             <p class="text-3xl font-bold">{{ $totalSurvei }}</p>
@@ -118,16 +129,6 @@
         <div class="glass-effect rounded-2xl p-6 card-hover">
             <p class="text-sm text-gray-600">Total Pegawai</p>
             <p class="text-3xl font-bold">{{ $totalPegawai }}</p>
-        </div>
-
-        <div class="glass-effect rounded-2xl p-6 card-hover">
-            <p class="text-sm text-gray-600">
-                Rata-rata Skor
-                @if($kontenId)
-                    <span class="text-xs">(Filtered)</span>
-                @endif
-            </p>
-            <p class="text-3xl font-bold">{{ number_format($avgSkor,2) }} / 5</p>
         </div>
     </div>
 
@@ -146,7 +147,6 @@
                     <th class="px-6 py-3 text-left">Pegawai</th>
                     <th class="px-6 py-3 text-left">Direktorat</th>
                     <th class="px-6 py-3 text-left">Konten</th>
-                    <th class="px-6 py-3 text-left">Skor</th>
                     <th class="px-6 py-3 text-left">Tanggal</th>
                     <th class="px-6 py-3 text-left">Aksi</th>
                 </tr>
@@ -172,9 +172,6 @@
                         <td class="px-6 py-3">{{ $survei->pegawai->nama ?? '-' }}</td>
                         <td class="px-6 py-3">{{ ucwords(str_replace('_', ' ', $survei->pegawai->direktorat ?? '-')) }}</td>
                         <td class="px-6 py-3">{{ $survei->kontenSurvei->judul ?? '-' }}</td>
-                        <td class="px-6 py-3 font-semibold">
-                            {{ number_format($survei->rata_rata, 2) }} / 5
-                        </td>
                         <td class="px-6 py-3">{{ $survei->created_at->format('d/m/Y') }}</td>
                         <td class="px-6 py-3">
                             <div class="flex items-center gap-3">
@@ -193,7 +190,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center py-10 text-gray-500">Data tidak ditemukan</td>
+                        <td colspan="7" class="text-center py-10 text-gray-500">Data tidak ditemukan</td>
                     </tr>
                 @endforelse
                 </tbody>

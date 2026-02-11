@@ -65,16 +65,6 @@
                     </div>
                 </div>
 
-                <!-- Rata-rata Skor -->
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-6">
-                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Rata-rata Skor</h2>
-                    <p class="text-3xl font-bold text-blue-600">{{ $rataRata }} / 5.00</p>
-                    @php
-                        $totalPertanyaanNumerik = $questions->flatten()->filter(fn($q) => ($q->type ?? 'scale') !== 'text')->count();
-                    @endphp
-                    <p class="text-sm text-gray-600 mt-2">Dari {{ $totalPertanyaanNumerik }} pertanyaan skala</p>
-                </div>
-
                 <!-- Detail Jawaban -->
                 <div class="mb-6">
                     <h2 class="text-xl font-semibold text-gray-900 mb-4">Detail Jawaban</h2>
@@ -88,11 +78,43 @@
                         <div class="space-y-4 ml-4">
                             @foreach($kategoriQuestions as $question)
                             @php
-                                $questionIndex++;
-                                $type = $question->type ?? 'scale';
-                                $key = 'q' . $questionIndex;
-                                $answers = $survei->answers ?? [];
-                            @endphp
+    $questionIndex++;
+    $key = 'q' . $questionIndex;
+
+    // Ambil semua jawaban dari JSON answers
+    $answers = is_array($survei->answers) ? $survei->answers : [];
+
+    // Pastikan type valid
+    $type = in_array($question->type, ['text','choice','scale'])
+        ? $question->type
+        : 'text';
+
+    // Ambil jawaban mentah
+    $raw = $answers[$key] ?? null;
+
+    // Khusus skala
+    $nilai = ($type === 'scale' && is_numeric($raw))
+        ? (int) $raw
+        : null;
+
+    $percent = $nilai !== null ? ($nilai / 5) * 100 : 0;
+
+    // Khusus pilihan
+    $optionText = null;
+    if ($type === 'choice' && $raw !== null) {
+        $opts = $question->options ?? [];
+        $idx = is_numeric($raw) ? ((int)$raw - 1) : null;
+        $optionText = ($idx !== null && isset($opts[$idx]))
+            ? $opts[$idx]
+            : (string) $raw;
+    }
+
+    if (is_array($raw)) {
+    $type = 'multiple';
+}
+
+@endphp
+
                             <div class="border border-gray-200 rounded-lg p-4">
                                 <div class="mb-3">
                                     <span class="text-sm font-medium text-gray-700">{{ $question->pertanyaan }}</span>
@@ -107,28 +129,41 @@
                                 </div>
                                 
                                 <div class="flex justify-between items-center mb-2">
-
                                     @if($type === 'text')
                                         <span class="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700 font-semibold">Isian Teks</span>
+                                    @elseif($type === 'choice')
+                                        <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold">Pilihan</span>
                                     @else
-                                        <span class="text-lg font-bold text-blue-600">
-                                            {{ $survei->{$key} }} / 5
-                                        </span>
+                                        <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700 font-semibold">Skala 1–5</span>
                                     @endif
                                 </div>
 
                                 @if($type === 'text')
                                     <div class="mt-2 bg-gray-50 rounded-lg p-3">
-                                        <p class="text-sm text-gray-700">
-                                            {{ $answers[$key] ?? '-' }}
-                                        </p>
+                                        @if(is_array($raw))
+    <ul class="list-disc ml-5 text-sm text-gray-700 space-y-1">
+        @foreach($raw as $item)
+            <li>{{ $item }}</li>
+        @endforeach
+    </ul>
+@else
+    <p class="text-sm text-gray-700">{{ $raw ?? '-' }}</p>
+@endif
+
+                                    </div>
+                                @elseif($type === 'choice')
+                                    <div class="mt-2 bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                                        <p class="text-base font-semibold text-emerald-800">{{ $optionText ?? '-' }}</p>
                                     </div>
                                 @else
-                                    <div class="mt-2">
-                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <span class="text-lg font-bold text-blue-600">
+    {{ $nilai !== null ? "$nilai / 5" : '-' }}
+</span>
+
+                                        <div class="flex-1 bg-gray-200 rounded-full h-2 max-w-[200px]">
                                             <div class="bg-blue-600 h-2 rounded-full"
-                                                 style="width: {{ max(0, min(100, ($survei->{$key} / 5) * 100)) }}%">
-                                            </div>
+                                                 style="width: {{ $nilai !== null ? max(0, min(100, ($nilai / 5) * 100)) : 0 }}%"></div>
                                         </div>
                                     </div>
                                 @endif

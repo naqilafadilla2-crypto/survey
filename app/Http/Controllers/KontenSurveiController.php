@@ -31,16 +31,21 @@ class KontenSurveiController extends Controller
     {
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'pendahuluan' => 'required|string',
-            'indikator' => 'required|string',
-            'deskripsi_survei' => 'required|string',
+            'pendahuluan' => 'nullable|string',
+            'indikator' => 'nullable|string',
+            'deskripsi_survei' => 'nullable|string',
             'tujuan_1' => 'required|string',
-            'tujuan_2' => 'required|string',
-            'tujuan_3' => 'required|string',
+            'tujuan_2' => 'nullable|string',
+            'tujuan_3' => 'nullable|string',
             'penutup' => 'required|string',
             'tahun' => 'required|integer|min:2000|max:2100',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
+
+        // Set default value untuk is_active jika tidak ada
+        if (!isset($validated['is_active'])) {
+            $validated['is_active'] = false;
+        }
 
         konten_survei::create($validated);
 
@@ -64,16 +69,21 @@ class KontenSurveiController extends Controller
     {
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
-            'pendahuluan' => 'required|string',
-            'indikator' => 'required|string',
-            'deskripsi_survei' => 'required|string',
+            'pendahuluan' => 'nullable|string',
+            'indikator' => 'nullable|string',
+            'deskripsi_survei' => 'nullable|string',
             'tujuan_1' => 'required|string',
-            'tujuan_2' => 'required|string',
-            'tujuan_3' => 'required|string',
+            'tujuan_2' => 'nullable|string',
+            'tujuan_3' => 'nullable|string',
             'penutup' => 'required|string',
             'tahun' => 'required|integer|min:2000|max:2100',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ]);
+
+        // Set default value untuk is_active jika tidak ada
+        if (!isset($validated['is_active'])) {
+            $validated['is_active'] = false;
+        }
 
         $kontenSurvei = konten_survei::findOrFail($id);
         $kontenSurvei->update($validated);

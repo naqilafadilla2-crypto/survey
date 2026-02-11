@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Question;
 use App\Models\konten_survei;
+use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -37,7 +38,8 @@ class QuestionController extends Controller
      */
     public function create(konten_survei $konten_survei)
     {
-        return view('admin.questions.create', compact('konten_survei'));
+        $kategoris = Kategori::orderBy('urutan')->get();
+        return view('admin.questions.create', compact('konten_survei', 'kategoris'));
     }
 
     /**
@@ -48,7 +50,7 @@ class QuestionController extends Controller
         $validated = $request->validate([
             'pertanyaan' => 'required|string',
             'kategori' => 'required|string',
-            'type' => 'required|in:scale,choice,text',
+            'type' => 'required|in:scale,choice,multiple,text',
             'options' => 'array',
             'options.*' => 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
@@ -60,8 +62,8 @@ class QuestionController extends Controller
             ->values()
             ->all();
 
-        // Jika tipe choice, minimal harus ada 2 opsi
-        if ($validated['type'] === 'choice' && count($options) < 2) {
+        // Jika tipe choice atau multiple, minimal harus ada 2 opsi
+        if (($validated['type'] === 'choice' || $validated['type'] === 'multiple') && count($options) < 2) {
             return back()
                 ->withErrors(['options' => 'Minimal isi 2 opsi untuk tipe pertanyaan pilihan.'])
                 ->withInput();
@@ -77,7 +79,7 @@ class QuestionController extends Controller
             'pertanyaan' => $validated['pertanyaan'],
             'kategori' => $validated['kategori'],
             'type' => $validated['type'],
-            'options' => $validated['type'] === 'choice' ? $options : null,
+            'options' => ($validated['type'] === 'choice' || $validated['type'] === 'multiple') ? $options : null,
             'foto' => $fotoPath,
             'konten_survei_id' => $konten_survei->id,
         ]);
@@ -96,7 +98,8 @@ class QuestionController extends Controller
             abort(404);
         }
 
-        return view('admin.questions.edit', compact('question', 'konten_survei'));
+        $kategoris = Kategori::orderBy('urutan')->get();
+        return view('admin.questions.edit', compact('question', 'konten_survei', 'kategoris'));
     }
 
     /**
@@ -112,7 +115,7 @@ class QuestionController extends Controller
         $validated = $request->validate([
             'pertanyaan' => 'required|string',
             'kategori' => 'required|string',
-            'type' => 'required|in:scale,choice,text',
+            'type' => 'required|in:scale,choice,multiple,text',
             'options' => 'array',
             'options.*' => 'nullable|string|max:255',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
@@ -124,7 +127,7 @@ class QuestionController extends Controller
             ->values()
             ->all();
 
-        if ($validated['type'] === 'choice' && count($options) < 2) {
+        if (($validated['type'] === 'choice' || $validated['type'] === 'multiple') && count($options) < 2) {
             return back()
                 ->withErrors(['options' => 'Minimal isi 2 opsi untuk tipe pertanyaan pilihan.'])
                 ->withInput();
@@ -135,7 +138,7 @@ class QuestionController extends Controller
             'pertanyaan' => $validated['pertanyaan'],
             'kategori' => $validated['kategori'],
             'type' => $validated['type'],
-            'options' => $validated['type'] === 'choice' ? $options : null,
+            'options' => ($validated['type'] === 'choice' || $validated['type'] === 'multiple') ? $options : null,
         ];
 
         if ($request->hasFile('foto')) {

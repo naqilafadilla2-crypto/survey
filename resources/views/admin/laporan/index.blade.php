@@ -10,11 +10,18 @@
 @endpush
 
 @section('header-actions')
-    <a href="{{ route('admin.laporan.export', ['konten_id' => $kontenId, 'mode' => $modeFilter]) }}" 
-       class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center">
-        <i data-lucide="download" class="w-4 h-4 mr-2"></i>
-        Export PDF
-    </a>
+    <div class="flex items-center gap-3">
+        <a href="{{ route('admin.laporan.export-excel', ['konten_id' => $kontenId, 'mode' => $modeFilter]) }}" 
+           class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center">
+            <i data-lucide="file-spreadsheet" class="w-4 h-4 mr-2"></i>
+            Download Excel
+        </a>
+        <a href="{{ route('admin.laporan.export', ['konten_id' => $kontenId, 'mode' => $modeFilter]) }}" 
+           class="bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 flex items-center">
+            <i data-lucide="file-text" class="w-4 h-4 mr-2"></i>
+            Export PDF
+        </a>
+    </div>
 @endsection
 
 @section('content')
@@ -107,24 +114,6 @@
         <div class="glass-effect rounded-2xl p-6 card-hover border border-gray-100">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-medium text-gray-600">Rata-rata Skor</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ number_format($avgSkor, 2) }}</p>
-                </div>
-                <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-3 rounded-full">
-                    <i data-lucide="star" class="w-6 h-6 text-white"></i>
-                </div>
-            </div>
-            <div class="mt-4">
-                <div class="flex items-center text-sm">
-                    <i data-lucide="target" class="w-4 h-4 text-blue-500 mr-1"></i>
-                    <span class="text-blue-500 font-medium">dari skala 5.00</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-effect rounded-2xl p-6 card-hover border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
                     <p class="text-sm font-medium text-gray-600">Konten Aktif</p>
                     <p class="text-3xl font-bold text-gray-900">{{ $kontenAktif }}</p>
                 </div>
@@ -180,7 +169,6 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Direktorat</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Pegawai</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Survei</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rata-rata Skor</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         </tr>
                     </thead>
@@ -190,14 +178,6 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $stat['nama'] }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $stat['total_pegawai'] }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $stat['total_survei'] }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    @if($stat['avg_score'] >= 4) bg-green-100 text-green-800
-                                    @elseif($stat['avg_score'] >= 3) bg-yellow-100 text-yellow-800
-                                    @else bg-red-100 text-red-800 @endif">
-                                    {{ number_format($stat['avg_score'], 2) }}
-                                </span>
-                            </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 @if($stat['total_survei'] > 0)
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
@@ -214,7 +194,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                                 <i data-lucide="building" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
                                 <p>Tidak ada data direktorat</p>
                             </td>
@@ -242,7 +222,6 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul Konten</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Respons</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rata-rata Skor</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Persentase</th>
                         </tr>
                     </thead>
@@ -265,16 +244,6 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $konten->surveis_count }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                @if($konten->surveis_count > 0)
-                                    @php
-                                        $avgScore = $konten->surveis()->selectRaw('AVG((q1+q2+q3+q4+q5+q6+q7+q8+q9+q10+q11+q12+q13+q14+q15+q16+q17+q18)/18) as avg')->first()->avg ?? 0;
-                                    @endphp
-                                    {{ number_format($avgScore, 2) }}
-                                @else
-                                    -
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                 @if($totalSurvei > 0)
                                     {{ number_format(($konten->surveis_count / $totalSurvei) * 100, 1) }}%
                                 @else
@@ -284,7 +253,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                                 <i data-lucide="file-text" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
                                 <p>Tidak ada data konten survei</p>
                             </td>
@@ -310,8 +279,8 @@
                     data: {
                         labels: monthlyData.map(item => item.month),
                         datasets: [{
-                            label: 'Rata-rata Skor',
-                            data: monthlyData.map(item => item.avg_score),
+                            label: 'Jumlah Survei',
+                            data: monthlyData.map(item => item.count),
                             borderColor: 'rgb(59, 130, 246)',
                             backgroundColor: 'rgba(59, 130, 246, 0.1)',
                             tension: 0.4,
@@ -328,7 +297,6 @@
                         scales: {
                             y: {
                                 beginAtZero: true,
-                                max: 5,
                                 grid: {
                                     display: false
                                 }

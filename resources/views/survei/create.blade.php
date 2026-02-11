@@ -310,9 +310,7 @@
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold text-gray-900">Pertanyaan Survei</h3>
-                        <p class="text-gray-600 text-sm">
-                            Berikan jawaban sesuai pertanyaan. Untuk tipe skala gunakan nilai 1 - 5, untuk tipe pilihan pilih salah satu opsi yang tersedia, dan untuk isian teks tuliskan jawaban Anda sendiri.
-                        </p>
+                        <p class="text-gray-600 text-sm">Berikan penilaian dari 1 (Sangat Tidak Puas) hingga 5 (Sangat Puas)</p>
                     </div>
                 </div>
 
@@ -340,53 +338,50 @@
                                         {{ $question->pertanyaan }}
                                     </h4>
 
-                                    @if($question->foto)
-                                        <div class="mb-4">
-                                            <img src="{{ asset('storage/' . $question->foto) }}" 
-                                                 alt="Foto pertanyaan" 
-                                                 class="max-w-full rounded-xl border border-gray-200 shadow-sm">
-                                        </div>
-                                    @endif
+                                    @if($question->type === 'scale')
+                                    <!-- Skala 1-5 -->
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-500 font-medium">Sangat Tidak Puas</span>
 
-                                    @if(($question->type ?? 'scale') === 'choice' && !empty($question->options))
-                                        <div class="space-y-3">
-                                            <div class="text-sm text-gray-500 font-medium">Pilih salah satu jawaban:</div>
-                                            <div class="flex flex-wrap gap-3">
-                                                @foreach($question->options as $optIndex => $optionLabel)
-                                                    @php $value = $optIndex + 1; @endphp
-                                                    <label class="group cursor-pointer">
-                                                        <input type="radio" name="q{{ $questionIndex }}" value="{{ $value }}" required class="rating-input sr-only peer">
-                                                        <div class="px-4 py-2 rounded-full border-2 border-gray-300 flex items-center justify-center group-hover:border-blue-400 peer-checked:border-blue-500 peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600 peer-checked:text-white transition-all duration-200">
-                                                            <span class="text-sm font-semibold">{{ $optionLabel }}</span>
-                                                        </div>
-                                                    </label>
-                                                @endforeach
-                                            </div>
+                                        <div class="flex items-center space-x-2">
+                                            @for($i = 1; $i <= 5; $i++)
+                                            <label class="group cursor-pointer">
+                                                <input type="radio" name="q{{ $questionIndex }}" value="{{ $i }}" required class="rating-input sr-only peer">
+                                                <div class="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center group-hover:border-blue-400 peer-checked:border-blue-500 peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600 peer-checked:text-white transition-all duration-200">
+                                                    <span class="text-sm font-semibold">{{ $i }}</span>
+                                                </div>
+                                            </label>
+                                            @endfor
                                         </div>
-                                    @elseif(($question->type ?? 'scale') === 'text')
-                                        <div class="space-y-3">
-                                            <div class="text-sm text-gray-500 font-medium">Tuliskan jawaban Anda:</div>
-                                            <textarea name="q{{ $questionIndex }}_text" rows="3"
-                                                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                                                      placeholder="Ketik jawaban Anda di sini..." required>{{ old('q' . $questionIndex . '_text') }}</textarea>
-                                        </div>
-                                    @else
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-sm text-gray-500 font-medium">Sangat Tidak Puas</span>
 
-                                            <div class="flex items-center space-x-2">
-                                                @for($i = 1; $i <= 5; $i++)
-                                                <label class="group cursor-pointer">
-                                                    <input type="radio" name="q{{ $questionIndex }}" value="{{ $i }}" required class="rating-input sr-only peer">
-                                                    <div class="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center group-hover:border-blue-400 peer-checked:border-blue-500 peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-purple-600 peer-checked:text-white transition-all duration-200">
-                                                        <span class="text-sm font-semibold">{{ $i }}</span>
-                                                    </div>
-                                                </label>
-                                                @endfor
-                                            </div>
+                                        <span class="text-sm text-gray-500 font-medium">Sangat Puas</span>
+                                    </div>
 
-                                            <span class="text-sm text-gray-500 font-medium">Sangat Puas</span>
-                                        </div>
+                                    @elseif($question->type === 'choice')
+                                    <!-- Radio Button (Single Select) -->
+                                    <div class="space-y-2">
+                                        @foreach($question->options as $option)
+                                        <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+                                            <input type="radio" name="q{{ $questionIndex }}" value="{{ $option }}" required class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+                                            <span class="ml-3 text-gray-700">{{ $option }}</span>
+                                        </label>
+                                        @endforeach
+                                    </div>
+
+                                    @elseif($question->type === 'multiple')
+                                    <!-- Checkbox (Multiple Select) -->
+                                    <div class="space-y-2">
+                                        @foreach($question->options as $option)
+                                        <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-purple-50 transition-colors">
+                                            <input type="checkbox" name="q{{ $questionIndex }}[]" value="{{ $option }}" class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500">
+                                            <span class="ml-3 text-gray-700">{{ $option }}</span>
+                                        </label>
+                                        @endforeach
+                                    </div>
+
+                                    @elseif($question->type === 'text')
+                                    <!-- Text Input -->
+                                    <textarea name="q{{ $questionIndex }}_text" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none" placeholder="Masukkan jawaban Anda di sini..."></textarea>
                                     @endif
                                 </div>
                             </div>

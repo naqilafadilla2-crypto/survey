@@ -9,6 +9,12 @@ use App\Models\pegawai;
 use App\Models\Question;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
 class AdminLaporanController extends Controller
 {
@@ -43,22 +49,6 @@ class AdminLaporanController extends Controller
         $totalPegawai    = pegawai::count();
         $kontenAktif     = konten_survei::where('is_active', true)->count();
         $totalPertanyaan = Question::count();
-
-        // =============================
-        // RATA-RATA SKOR GLOBAL
-        // =============================
-        $avgSkor = survei::when($kontenId, fn ($q) =>
-            $q->where('konten_survei_id', $kontenId)
-        )->when($modeFilter, fn ($q) =>
-            $q->where('mode', $modeFilter)
-        )
-        ->selectRaw('
-            AVG(
-                (q1+q2+q3+q4+q5+q6+q7+q8+q9+q10+
-                 q11+q12+q13+q14+q15+q16+q17+q18) / 18
-            ) as avg
-        ')
-        ->value('avg') ?? 0;
 
         // =============================
         // DATA RESPONS 7 HARI TERAKHIR
@@ -131,53 +121,33 @@ class AdminLaporanController extends Controller
 
             $totalSurveiDirektorat = $surveis->count();
 
-            $avgScoreDirektorat = $totalSurveiDirektorat > 0
-                ? round(
-                    $surveis->avg(fn ($s) =>
-                        (
-                            $s->q1 + $s->q2 + $s->q3 + $s->q4 + $s->q5 +
-                            $s->q6 + $s->q7 + $s->q8 + $s->q9 + $s->q10 +
-                            $s->q11 + $s->q12 + $s->q13 + $s->q14 +
-                            $s->q15 + $s->q16 + $s->q17 + $s->q18
-                        ) / 18
-                    ),
-                2)
-                : 0;
-
             $direktoratStats[] = [
                 'nama'          => ucwords(str_replace('_', ' ', $dir)),
                 'total_pegawai' => $totalPegawaiDirektorat,
                 'total_survei'  => $totalSurveiDirektorat,
-                'avg_score'     => $avgScoreDirektorat,
             ];
         }
 
         // =============================
-        // TREND SKOR BULANAN (6 BULAN)
+        // TREND JUMLAH SURVEI BULANAN (6 BULAN)
         // =============================
         $monthlyTrend = [];
 
         for ($i = 5; $i >= 0; $i--) {
             $month = now()->subMonths($i);
 
-            $avg = survei::when($kontenId, fn ($q) =>
+            $count = survei::when($kontenId, fn ($q) =>
                 $q->where('konten_survei_id', $kontenId)
             )->when($modeFilter, fn ($q) =>
                 $q->where('mode', $modeFilter)
             )
             ->whereYear('created_at', $month->year)
             ->whereMonth('created_at', $month->month)
-            ->selectRaw('
-                AVG(
-                    (q1+q2+q3+q4+q5+q6+q7+q8+q9+q10+
-                     q11+q12+q13+q14+q15+q16+q17+q18) / 18
-                ) as avg
-            ')
-            ->value('avg') ?? 0;
+            ->count();
 
             $monthlyTrend[] = [
-                'month'     => $month->format('M Y'),
-                'avg_score' => round($avg, 2),
+                'month' => $month->format('M Y'),
+                'count' => $count,
             ];
         }
 
@@ -186,7 +156,6 @@ class AdminLaporanController extends Controller
             'totalPegawai',
             'kontenAktif',
             'totalPertanyaan',
-            'avgSkor',
             'surveyData',
             'kontenStats',
             'direktoratStats',
@@ -217,29 +186,108 @@ class AdminLaporanController extends Controller
             )->when($modeFilter, fn ($q) =>
                 $q->where('mode', $modeFilter)
             )
+            ->orderBy('created_at', 'desc')
             ->get();
-
-        $avgSkor = $surveis->count() > 0
-            ? round(
-                $surveis->avg(fn ($s) =>
-                    (
-                        $s->q1 + $s->q2 + $s->q3 + $s->q4 + $s->q5 +
-                        $s->q6 + $s->q7 + $s->q8 + $s->q9 + $s->q10 +
-                        $s->q11 + $s->q12 + $s->q13 + $s->q14 +
-                        $s->q15 + $s->q16 + $s->q17 + $s->q18
-                    ) / 18
-                ),
-            2)
-            : 0;
 
         $pdf = Pdf::loadView('admin.laporan.export-pdf', [
             'surveis'     => $surveis,
-            'avgSkor'     => $avgSkor,
             'kontenLabel' => $kontenLabel,
         ]);
 
         return $pdf->download(
             'laporan-survei-' . now()->format('Y-m-d-H-i-s') . '.pdf'
         );
+    }
+
+    /**
+     * Export laporan ke Excel (.xlsx) dengan kolom rapi dan lebar otomatis
+     */
+    public function exportExcel(Request $request)
+    {
+        $kontenId = $request->get('konten_id');
+        $modeFilter = $request->get('mode');
+
+        if ($kontenId) {
+            $konten = konten_survei::find($kontenId);
+        }
+
+        $surveis = survei::with(['pegawai', 'kontenSurvei'])
+            ->when($kontenId, fn ($q) =>
+                $q->where('konten_survei_id', $kontenId)
+            )->when($modeFilter, fn ($q) =>
+                $q->where('mode', $modeFilter)
+            )
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Laporan Survei');
+
+        // Header (baris 1)
+        $headers = [
+            'A1' => 'No',
+            'B1' => 'Mode',
+            'C1' => 'Nama Pegawai',
+            'D1' => 'Direktorat',
+            'E1' => 'Divisi',
+            'F1' => 'Status Pegawai',
+            'G1' => 'Lama Bekerja',
+            'H1' => 'Konten Survei',
+            'I1' => 'Tanggal',
+        ];
+        foreach ($headers as $cell => $value) {
+            $sheet->setCellValue($cell, $value);
+        }
+
+        // Gaya header: tebal, background abu-abu
+        $headerRange = 'A1:I1';
+        $sheet->getStyle($headerRange)->getFont()->setBold(true);
+        $sheet->getStyle($headerRange)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('E5E7EB');
+        $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Data
+        $row = 2;
+        foreach ($surveis as $index => $survei) {
+            $pegawai = $survei->pegawai;
+            $konten = $survei->kontenSurvei;
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $survei->mode === 'public' ? 'Public' : 'Internal');
+            $sheet->setCellValue('C' . $row, $pegawai->nama ?? '-');
+            $sheet->setCellValue('D' . $row, ucwords(str_replace('_', ' ', $pegawai->direktorat ?? '-')));
+            $sheet->setCellValue('E' . $row, $pegawai->divisi ?? '-');
+            $sheet->setCellValue('F' . $row, $pegawai->status_pegawai ?? '-');
+            $sheet->setCellValue('G' . $row, ucwords(str_replace('_', ' ', $pegawai->lama_bekerja ?? '-')));
+            $sheet->setCellValue('H' . $row, $konten->judul ?? '-');
+            // Tanggal: simpan sebagai nilai Excel lalu format tampilan (kolom I auto-size agar tidak #####)
+            $sheet->setCellValue('I' . $row, ExcelDate::PHPToExcel($survei->created_at));
+            $sheet->getStyle('I' . $row)->getNumberFormat()->setFormatCode('dd/mm/yyyy hh:mm');
+            $row++;
+        }
+
+        // Auto-size kolom agar teks tidak terpotong
+        foreach (range('A', 'I') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+        // Kolom Tanggal: lebar minimum agar format dd/mm/yyyy hh:mm tidak tampil #####
+        $sheet->getColumnDimension('I')->setWidth(20);
+
+        // Border ringan untuk tabel
+        $dataRange = 'A1:I' . ($row - 1);
+        $sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+        $filename = 'laporan-survei-' . now()->format('Y-m-d-H-i-s') . '.xlsx';
+
+        $writer = new Xlsx($spreadsheet);
+        $tempFile = storage_path('app/temp_' . $filename);
+        $writer->save($tempFile);
+
+        $response = response()->download($tempFile, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
+
+        return $response;
     }
 }

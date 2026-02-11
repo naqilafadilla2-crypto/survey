@@ -51,7 +51,11 @@ class SurveiController extends Controller
     {
         // Ambil konten survei
         $kontenSurvei = konten_survei::findOrFail($request->konten_survei_id);
-        $questions = \App\Models\Question::where('konten_survei_id', $kontenSurvei->id)->orderBy('id')->get();
+        // PENTING: Gunakan ordering yang sama dengan create view (kategori, id)
+        $questions = \App\Models\Question::where('konten_survei_id', $kontenSurvei->id)
+            ->orderBy('kategori')
+            ->orderBy('id')
+            ->get();
 
         // ================= VALIDASI =================
         $rules = [
@@ -83,8 +87,15 @@ class SurveiController extends Controller
             if ($type === 'text') {
                 // Isian teks bebas
                 $rules[$key . '_text'] = 'required|string|max:1000';
+            } elseif ($type === 'choice') {
+                // Single select - simpan sebagai string (nama option)
+                $rules[$key] = 'required|string|max:255';
+            } elseif ($type === 'multiple') {
+                // Multiple select (checkbox) - simpan sebagai array
+                $rules[$key] = 'required|array|min:1';
+                $rules[$key . '.*'] = 'string|max:255';
             } else {
-                // Skala 1-5 atau pilihan (disimpan sebagai angka index)
+                // Scale 1-5 - simpan sebagai angka
                 $rules[$key] = 'required|integer|min:1|max:5';
             }
         }
@@ -111,6 +122,7 @@ class SurveiController extends Controller
 
         // ================= SIMPAN SURVEI =================
         $answersText = [];
+        $answersChoice = [];
 
         $surveiData = [
             'pegawai_id' => $pegawai->id,
@@ -130,14 +142,24 @@ class SurveiController extends Controller
             $type = $question->type ?? 'scale';
 
             if ($type === 'text') {
+                // Teks bebas - simpan di answers JSON
                 $answersText[$key] = $validated[$key . '_text'] ?? null;
+            } elseif ($type === 'choice') {
+                // Single select - simpan string option di answers JSON
+                $answersChoice[$key] = $validated[$key] ?? null;
+            } elseif ($type === 'multiple') {
+                // Multiple select (checkbox) - simpan array di answers JSON
+                $answersChoice[$key] = $validated[$key] ?? [];
             } else {
+                // Scale 1-5 - simpan langsung di kolom q sebagai numeric
                 $surveiData[$key] = $validated[$key] ?? null;
             }
         }
 
-        if (!empty($answersText)) {
-            $surveiData['answers'] = $answersText;
+        // Merge answers (text dan choice/multiple)
+        $allAnswers = array_merge($answersText, $answersChoice);
+        if (!empty($allAnswers)) {
+            $surveiData['answers'] = $allAnswers;
         }
 
         survei::create($surveiData);
@@ -168,19 +190,32 @@ class SurveiController extends Controller
             ->get()
             ->groupBy('kategori');
 
-        // Hitung rata-rata hanya dari pertanyaan numerik (bukan isian teks)
+        // Parse answers JSON jika ada
+        $answers = is_string($survei->answers) ? json_decode($survei->answers, true) : $survei->answers;
+        if (!is_array($answers)) {
+            $answers = [];
+        }
+
+        // Hitung rata-rata hanya dari pertanyaan scale (tipe 'scale')
         $totalSkor = 0;
         $totalQuestions = 0;
-        foreach ($questions->flatten() as $index => $question) {
-            $type = $question->type ?? 'scale';
-            if ($type === 'text') {
-                continue;
-            }
+        $questionIndex = 0;
+        
+        foreach ($questions as $kategori => $kategoriQuestions) {
+            foreach ($kategoriQuestions as $question) {
+                $questionIndex++;
+                $type = $question->type ?? 'scale';
+                
+                // Hanya hitung scale type untuk rata-rata
+                if ($type !== 'scale') {
+                    continue;
+                }
 
-            $nilai = $survei->{'q' . ($index + 1)};
-            if (!is_null($nilai)) {
-                $totalSkor += $nilai;
-                $totalQuestions++;
+                $nilai = $survei->{'q' . $questionIndex};
+                if (!is_null($nilai)) {
+                    $totalSkor += $nilai;
+                    $totalQuestions++;
+                }
             }
         }
 
@@ -190,6 +225,7 @@ class SurveiController extends Controller
             'survei'    => $survei,
             'rataRata'  => $rataRata,
             'questions' => $questions,
+            'answers'   => $answers,
         ]);
     }
     

@@ -5,6 +5,41 @@
 @section('page-title', 'Tambah Pertanyaan')
 @section('page-description', $konten_survei->judul . ' - Tahun ' . $konten_survei->tahun)
 
+@push('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container--default .select2-selection--single {
+        border: 1px solid #d1d5db;
+        border-radius: 0.75rem;
+        height: auto;
+        padding: 0.5rem 0.25rem;
+    }
+    
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        padding: 0.5rem 1rem;
+        color: #111827;
+    }
+    
+    .select2-container--default.select2-container--focus .select2-selection--single {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .select2-dropdown {
+        border-radius: 0.75rem;
+        border-color: #d1d5db;
+    }
+    
+    .select2-results__option {
+        padding: 10px;
+    }
+    
+    .select2-results__option--highlighted {
+        background-color: #3b82f6 !important;
+    }
+</style>
+@endpush
+
 @section('content')
     <div class="glass-effect rounded-2xl overflow-hidden border border-gray-100">
         <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
@@ -17,33 +52,66 @@
                 <div>
                     <label for="kategori" class="block text-sm font-medium text-gray-700 mb-2">Kategori Pertanyaan</label>
                     <select id="kategori" name="kategori" 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" 
+                            class="select2-kategori w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" 
                             required>
                         <option value="">Pilih Kategori</option>
-                        <option value="Pengelolaan Barang Milik Negara (BMN)" {{ old('kategori') == 'Pengelolaan Barang Milik Negara (BMN)' ? 'selected' : '' }}>Pengelolaan Barang Milik Negara (BMN)</option>
-                        <option value="Perencanaan dan Penganggaran" {{ old('kategori') == 'Perencanaan dan Penganggaran' ? 'selected' : '' }}>Perencanaan dan Penganggaran</option>
-                        <option value="Sistem Kearsipan" {{ old('kategori') == 'Sistem Kearsipan' ? 'selected' : '' }}>Sistem Kearsipan</option>
-                        <option value="Layanan Kepegawaian" {{ old('kategori') == 'Layanan Kepegawaian' ? 'selected' : '' }}>Layanan Kepegawaian</option>
+                        @foreach ($kategoris as $kategori)
+                            <option value="{{ $kategori->nama }}" {{ old('kategori') == $kategori->nama ? 'selected' : '' }}>
+                                {{ $kategori->nama }}
+                            </option>
+                        @endforeach
                     </select>
+                    <div class="mt-2 flex items-center gap-2">
+                        <a href="{{ route('admin.kategoris.create') }}" target="_blank" class="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+                            <i data-lucide="plus" class="w-3 h-3"></i>
+                            Tambah kategori baru
+                        </a>
+                    </div>
                     @error('kategori')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="type" class="block text-sm font-medium text-gray-700 mb-2">Tipe Pertanyaan</label>
-                    <select id="type" name="type"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
-                            required>
-                        <option value="scale" {{ old('type', 'scale') === 'scale' ? 'selected' : '' }}>Skala 1 - 5</option>
-                        <option value="choice" {{ old('type') === 'choice' ? 'selected' : '' }}>Pilihan (Ya/Tidak, dll)</option>
-                        <option value="text" {{ old('type') === 'text' ? 'selected' : '' }}>Isian Teks (diketik pegawai)</option>
-                    </select>
-                    <p class="mt-2 text-xs text-gray-500">
-                        - Pilih <span class="font-semibold">Skala 1 - 5</span> untuk penilaian angka.<br>
-                        - Pilih <span class="font-semibold">Pilihan</span> untuk membuat opsi seperti Ya/Tidak.<br>
-                        - Pilih <span class="font-semibold">Isian Teks</span> jika pegawai diminta mengetik jawabannya sendiri.
-                    </p>
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Tipe Pertanyaan</label>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <input type="radio" id="type-scale" name="type" value="scale" 
+                                   {{ old('type', 'scale') === 'scale' ? 'checked' : '' }} 
+                                   class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" required>
+                            <label for="type-scale" class="ml-3 block cursor-pointer">
+                                <p class="font-medium text-gray-900">Skala 1 - 5</p>
+                                <p class="text-xs text-gray-500">Untuk penilaian dengan skala angka 1 sampai 5</p>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="type-choice" name="type" value="choice" 
+                                   {{ old('type') === 'choice' ? 'checked' : '' }} 
+                                   class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" required>
+                            <label for="type-choice" class="ml-3 block cursor-pointer">
+                                <p class="font-medium text-gray-900">Pilihan (Single Select)</p>
+                                <p class="text-xs text-gray-500">Untuk memilih satu opsi saja (radio button)</p>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="type-multiple" name="type" value="multiple" 
+                                   {{ old('type') === 'multiple' ? 'checked' : '' }} 
+                                   class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" required>
+                            <label for="type-multiple" class="ml-3 block cursor-pointer">
+                                <p class="font-medium text-gray-900">Pilihan Multiple (Checkbox)</p>
+                                <p class="text-xs text-gray-500">Untuk memilih lebih dari satu opsi (checkbox)</p>
+                            </label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="radio" id="type-text" name="type" value="text" 
+                                   {{ old('type') === 'text' ? 'checked' : '' }} 
+                                   class="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500" required>
+                            <label for="type-text" class="ml-3 block cursor-pointer">
+                                <p class="font-medium text-gray-900">Isian Teks</p>
+                                <p class="text-xs text-gray-500">Untuk jawaban yang diketik oleh pegawai sendiri</p>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 <div>
@@ -57,15 +125,15 @@
                     @enderror
                 </div>
 
-                <div id="choice-options" class="space-y-3 {{ old('type') === 'choice' ? '' : 'hidden' }}">
+                <div id="choice-options" class="space-y-3 {{ old('type') === 'choice' || old('type') === 'multiple' ? '' : 'hidden' }}">
                     <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Opsi Jawaban (maksimal 5, minimal 2 untuk tipe pilihan)
+                        Opsi Jawaban (maksimal 10, minimal 2 untuk tipe pilihan)
                     </label>
-                    @for($i = 0; $i < 5; $i++)
+                    @for($i = 0; $i < 10; $i++)
                         <input type="text" name="options[]" 
                                value="{{ old('options.' . $i) }}"
                                class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                               placeholder="{{ $i === 0 ? 'Contoh: Ya' : ($i === 1 ? 'Contoh: Tidak' : 'Opsi tambahan (opsional)') }}">
+                               placeholder="{{ $i === 0 ? 'Contoh: Ya' : ($i === 1 ? 'Contoh: Tidak' : 'Contoh: Mungkin' . ($i <= 8 ? ' (opsional)' : '')) }}">
                     @endfor
                     @error('options')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -108,20 +176,36 @@
         </form>
     </div>
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
+    $(document).ready(function() {
+        // Initialize Select2 untuk kategori dengan fitur search
+        $('.select2-kategori').select2({
+            placeholder: 'Pilih atau ketik kategori...',
+            allowClear: true,
+            width: '100%',
+            language: 'id'
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function () {
-        const typeSelect = document.getElementById('type');
+        const typeRadios = document.querySelectorAll('input[name=\"type\"]');
         const choiceOptions = document.getElementById('choice-options');
 
         function toggleOptions() {
-            if (typeSelect.value === 'choice') {
+            const selectedType = document.querySelector('input[name=\"type\"]:checked')?.value;
+            if (selectedType === 'choice' || selectedType === 'multiple') {
                 choiceOptions.classList.remove('hidden');
             } else {
                 choiceOptions.classList.add('hidden');
             }
         }
 
-        typeSelect.addEventListener('change', toggleOptions);
+        typeRadios.forEach(radio => {
+            radio.addEventListener('change', toggleOptions);
+        });
         toggleOptions();
 
         // Preview foto

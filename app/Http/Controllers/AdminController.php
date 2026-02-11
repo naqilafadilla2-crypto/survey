@@ -32,14 +32,7 @@ class AdminController extends Controller
         $totalPegawai = pegawai::count();
         $kontenAktif = konten_survei::where('is_active', true)->count();
         $totalPertanyaan = Question::count();
-        
-        // Rata-rata skor keseluruhan
-        $avgSkorQuery = survei::selectRaw('AVG((q1+q2+q3+q4+q5+q6+q7+q8+q9+q10+q11+q12+q13+q14+q15+q16+q17+q18)/18) as avg');
-        if ($kontenId) {
-            $avgSkorQuery->where('konten_survei_id', $kontenId);
-        }
-        $avgSkor = $avgSkorQuery->first()->avg ?? 0;
-        
+
         // Daftar semua survei dengan pagination
         $surveisQuery = survei::with(['pegawai', 'kontenSurvei']);
         if ($kontenId) {
@@ -47,40 +40,6 @@ class AdminController extends Controller
         }
         $surveis = $surveisQuery->orderBy('created_at', 'desc')
             ->paginate(15);
-
-        // Ambil semua pertanyaan untuk hitung skor dinamis (hanya numerik)
-        $allQuestions = Question::orderBy('konten_survei_id')
-            ->orderBy('kategori')
-            ->orderBy('id')
-            ->get();
-
-        // Hitung rata-rata untuk setiap survei (hanya pertanyaan skala/pilihan, bukan teks)
-        foreach ($surveis as $survei) {
-            $questionsByKonten = $allQuestions->where('konten_survei_id', $survei->konten_survei_id);
-            
-            $totalSkor = 0;
-            $totalPertanyaan = 0;
-            $questionIndex = 1;
-
-            foreach ($questionsByKonten as $question) {
-                $type = $question->type ?? 'scale';
-                if ($type === 'text') {
-                    $questionIndex++;
-                    continue;
-                }
-
-                $nilai = $survei->{'q' . $questionIndex};
-                if (!is_null($nilai)) {
-                    $totalSkor += $nilai;
-                    $totalPertanyaan++;
-                }
-                $questionIndex++;
-            }
-
-            $survei->rata_rata = $totalPertanyaan > 0
-                ? round($totalSkor / $totalPertanyaan, 2)
-                : 0;
-        }
 
         // Statistik per direktorat (hanya untuk survei yang difilter)
         $statistikDirektoratQuery = pegawai::join('surveis', 'pegawais.id', '=', 'surveis.pegawai_id')
@@ -105,7 +64,6 @@ class AdminController extends Controller
             'totalPegawai',
             'kontenAktif',
             'totalPertanyaan',
-            'avgSkor',
             'surveis',
             'statistikDirektorat',
             'statistikStatus',

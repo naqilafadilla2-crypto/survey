@@ -26,30 +26,27 @@
                 </div>
 
                 <div>
-                    <label for="pendahuluan" class="block text-sm font-medium text-gray-700 mb-2">Pendahuluan</label>
+                    <label for="pendahuluan" class="block text-sm font-medium text-gray-700 mb-2">Pendahuluan <span class="text-gray-500 font-normal">(Opsional)</span></label>
                     <textarea id="pendahuluan" name="pendahuluan" rows="4" 
-                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                              required>{{ old('pendahuluan', $kontenSurvei->pendahuluan) }}</textarea>
+                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('pendahuluan', $kontenSurvei->pendahuluan) }}</textarea>
                     @error('pendahuluan')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="indikator" class="block text-sm font-medium text-gray-700 mb-2">Indikator</label>
+                    <label for="indikator" class="block text-sm font-medium text-gray-700 mb-2">Indikator <span class="text-gray-500 font-normal">(Opsional)</span></label>
                     <textarea id="indikator" name="indikator" rows="3" 
-                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                              required>{{ old('indikator', $kontenSurvei->indikator) }}</textarea>
+                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('indikator', $kontenSurvei->indikator) }}</textarea>
                     @error('indikator')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="deskripsi_survei" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Survei</label>
+                    <label for="deskripsi_survei" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Survei <span class="text-gray-500 font-normal">(Opsional)</span></label>
                     <textarea id="deskripsi_survei" name="deskripsi_survei" rows="4" 
-                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                              required>{{ old('deskripsi_survei', $kontenSurvei->deskripsi_survei) }}</textarea>
+                              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('deskripsi_survei', $kontenSurvei->deskripsi_survei) }}</textarea>
                     @error('deskripsi_survei')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -67,20 +64,18 @@
                     </div>
 
                     <div>
-                        <label for="tujuan_2" class="block text-sm font-medium text-gray-700 mb-2">Tujuan 2</label>
+                        <label for="tujuan_2" class="block text-sm font-medium text-gray-700 mb-2">Tujuan 2 <span class="text-gray-500 font-normal">(Opsional)</span></label>
                         <textarea id="tujuan_2" name="tujuan_2" rows="2" 
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                                  required>{{ old('tujuan_2', $kontenSurvei->tujuan_2) }}</textarea>
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('tujuan_2', $kontenSurvei->tujuan_2) }}</textarea>
                         @error('tujuan_2')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="tujuan_3" class="block text-sm font-medium text-gray-700 mb-2">Tujuan 3</label>
+                        <label for="tujuan_3" class="block text-sm font-medium text-gray-700 mb-2">Tujuan 3 <span class="text-gray-500 font-normal">(Opsional)</span></label>
                         <textarea id="tujuan_3" name="tujuan_3" rows="2" 
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
-                                  required>{{ old('tujuan_3', $kontenSurvei->tujuan_3) }}</textarea>
+                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500">{{ old('tujuan_3', $kontenSurvei->tujuan_3) }}</textarea>
                         @error('tujuan_3')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -110,6 +105,7 @@
                     </div>
 
                     <div class="flex items-center pt-8">
+                        <input type="hidden" name="is_active" value="0">
                         <input type="checkbox" id="is_active" name="is_active" value="1" 
                                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
                                {{ old('is_active', $kontenSurvei->is_active) ? 'checked' : '' }}>

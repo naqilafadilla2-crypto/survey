@@ -119,6 +119,12 @@
                         <i data-lucide="clock" class="w-5 h-5"></i>
                         <span class="font-medium">Lama Bekerja</span>
                     </a>
+
+                    <a href="{{ route('admin.kategoris.index') }}" 
+                       class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 {{ request()->routeIs('admin.kategoris.*') ? 'active' : '' }}">
+                        <i data-lucide="tag" class="w-5 h-5"></i>
+                        <span class="font-medium">Kategori Pertanyaan</span>
+                    </a>
                 </div>
             </nav>
 

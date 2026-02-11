@@ -14,6 +14,17 @@
 @endsection
 
 @section('content')
+    @if(session('success'))
+        <div class="mb-6 bg-green-50 border border-green-200 rounded-2xl p-4">
+            <div class="flex gap-3">
+                <i data-lucide="check-circle" class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <p class="text-green-900 font-medium">{{ session('success') }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if($kontenSurveis->count() > 0)
     <!-- Konten Cards Grid -->
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
