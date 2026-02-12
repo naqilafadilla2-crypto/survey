@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard Admin') - SurveyApp</title>
+    <title>@yield('title', 'Dashboard Admin') - SimBakti</title>
     
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -58,7 +58,7 @@
                        <img src="{{ asset('assets/logo.png') }}" alt="Logo SurveyApp" class="w-10 h-10 object-contain">
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold text-gray-900">SurveyApp</h1>
+                        <h1 class="text-lg font-bold text-gray-900">SimBakti</h1>
                         <p class="text-xs text-gray-500">Admin Panel</p>
                     </div>
                 </div>

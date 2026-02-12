@@ -6,6 +6,7 @@
 @section('page-description', 'Selamat datang di panel admin')
 
 @section('content')
+
     <!-- MENU CARD -->
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <a href="{{ route('admin.konten-survei.index') }}" class="glass-effect rounded-2xl p-6 card-hover">
@@ -66,6 +67,7 @@
             </div>
             <span class="text-xs text-gray-500">Kelola opsi yang tampil di form survei</span>
         </div>
+
         <div class="grid md:grid-cols-3 gap-4">
             <a href="{{ route('admin.direktorats.index') }}" class="glass-effect rounded-xl p-4 border border-gray-100 hover:border-indigo-200 transition-all">
                 <div class="flex items-center gap-3">
@@ -78,6 +80,7 @@
                     </div>
                 </div>
             </a>
+
             <a href="{{ route('admin.status-pegawais.index') }}" class="glass-effect rounded-xl p-4 border border-gray-100 hover:border-indigo-200 transition-all">
                 <div class="flex items-center gap-3">
                     <div class="bg-green-100 p-2 rounded-lg">
@@ -89,6 +92,7 @@
                     </div>
                 </div>
             </a>
+
             <a href="{{ route('admin.lama-bekerjas.index') }}" class="glass-effect rounded-xl p-4 border border-gray-100 hover:border-indigo-200 transition-all">
                 <div class="flex items-center gap-3">
                     <div class="bg-amber-100 p-2 rounded-lg">
@@ -100,6 +104,7 @@
                     </div>
                 </div>
             </a>
+
             <a href="{{ route('admin.kategoris.index') }}" class="glass-effect rounded-xl p-4 border border-gray-100 hover:border-indigo-200 transition-all">
                 <div class="flex items-center gap-3">
                     <div class="bg-rose-100 p-2 rounded-lg">
@@ -135,64 +140,67 @@
     <!-- TABLE SURVEI -->
     <div class="glass-effect rounded-2xl overflow-hidden">
         <div class="px-6 py-4 border-b font-semibold flex items-center gap-2">
-            <i data-lucide="table" class="w-5 h-5"></i> Data Survei
+            <i data-lucide="table" class="w-5 h-5"></i>
+            Data Survei
         </div>
 
         <div class="overflow-x-auto">
             <table class="min-w-full text-sm divide-y">
                 <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left">No</th>
-                    <th class="px-6 py-3 text-left">Mode</th>
-                    <th class="px-6 py-3 text-left">Pegawai</th>
-                    <th class="px-6 py-3 text-left">Direktorat</th>
-                    <th class="px-6 py-3 text-left">Konten</th>
-                    <th class="px-6 py-3 text-left">Tanggal</th>
-                    <th class="px-6 py-3 text-left">Aksi</th>
-                </tr>
+                    <tr>
+                        <th class="px-6 py-3 text-left">No</th>
+                        <th class="px-6 py-3 text-left">Mode</th>
+                        <th class="px-6 py-3 text-left">Pegawai</th>
+                        <th class="px-6 py-3 text-left">Direktorat</th>
+                        <th class="px-6 py-3 text-left">Konten</th>
+                        <th class="px-6 py-3 text-left">Tanggal</th>
+                        <th class="px-6 py-3 text-left">Aksi</th>
+                    </tr>
                 </thead>
 
                 <tbody>
-                @forelse($surveis as $i => $survei)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-3">{{ $surveis->firstItem() + $i }}</td>
-                        <td class="px-6 py-3">
-                            @if($survei->mode === 'public')
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
-                                    <i data-lucide="globe" class="w-3 h-3 mr-1"></i>
-                                    Public
-                                </span>
-                            @else
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
-                                    <i data-lucide="shield" class="w-3 h-3 mr-1"></i>
-                                    Internal
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-3">{{ $survei->pegawai->nama ?? '-' }}</td>
-                        <td class="px-6 py-3">{{ ucwords(str_replace('_', ' ', $survei->pegawai->direktorat ?? '-')) }}</td>
-                        <td class="px-6 py-3">{{ $survei->kontenSurvei->judul ?? '-' }}</td>
-                        <td class="px-6 py-3">{{ $survei->created_at->format('d/m/Y') }}</td>
-                        <td class="px-6 py-3">
-                            <div class="flex items-center gap-3">
-                                <a href="{{ route('admin.survei.show',$survei->id) }}" class="text-blue-600 hover:underline">
-                                    Detail
-                                </a>
-                                <form action="{{ route('admin.survei.destroy', $survei->id) }}" method="POST" onsubmit="return confirm('Hapus survei ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:underline">
-                                        Hapus
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="text-center py-10 text-gray-500">Data tidak ditemukan</td>
-                    </tr>
-                @endforelse
+                    @forelse($surveis as $i => $survei)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-3">{{ $surveis->firstItem() + $i }}</td>
+                            <td class="px-6 py-3">
+                                @if($survei->mode === 'public')
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+                                        <i data-lucide="globe" class="w-3 h-3 mr-1"></i>
+                                        Public
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 border border-green-200">
+                                        <i data-lucide="shield" class="w-3 h-3 mr-1"></i>
+                                        Internal
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-3">{{ $survei->pegawai->nama ?? '-' }}</td>
+                            <td class="px-6 py-3">{{ ucwords(str_replace('_', ' ', $survei->pegawai->direktorat ?? '-')) }}</td>
+                            <td class="px-6 py-3">{{ $survei->kontenSurvei->judul ?? '-' }}</td>
+                            <td class="px-6 py-3">{{ $survei->created_at->format('d/m/Y') }}</td>
+                            <td class="px-6 py-3">
+                                <div class="flex items-center gap-3">
+                                    <a href="{{ route('admin.survei.show', $survei->id) }}" class="text-blue-600 hover:underline">
+                                        Detail
+                                    </a>
+                                    <form action="{{ route('admin.survei.destroy', $survei->id) }}" method="POST" onsubmit="return confirm('Hapus survei ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:underline">
+                                            Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center py-10 text-gray-500">
+                                Data tidak ditemukan
+                            </td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -203,4 +211,47 @@
             </div>
         @endif
     </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-gradient-to-r from-indigo-700 to-purple-700 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+            <div class="grid md:grid-cols-3 gap-8 text-sm">
+                <div>
+                    <h3 class="font-semibold mb-3">Alamat Kantor</h3>
+                    <p class="text-indigo-100">
+                        Centennial Tower Lt. 42-45<br>
+                        Jl. Gatot Subroto Kav. 24-25<br>
+                        Jakarta 12930
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-3">Kontak</h3>
+                    <p class="text-indigo-100">Telepon: (021) 3193 6590</p>
+                    <p class="text-indigo-100">
+                        Email:
+                        <a href="mailto:humas@baktikominfo.id" class="underline hover:text-white">
+                            humas@baktikominfo.id
+                        </a>
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-3">Jam Operasional</h3>
+                    <p class="text-indigo-100">Senin - Jumat</p>
+                    <p class="text-indigo-100">08.00 - 17.00 WIB</p>
+                    <p class="text-indigo-100">Layanan Online: 24 Jam</p>
+                </div>
+            </div>
+
+            <div class="border-t border-white/20 mt-8 pt-4 text-center text-xs text-indigo-200">
+                © {{ date('Y') }} SimBakti - Bakti Komdigi. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
 @endsection

@@ -84,4 +84,46 @@
             </div>
         @endif
     </div>
+     <!-- FOOTER -->
+    <footer class="bg-gradient-to-r from-indigo-700 to-purple-700 text-white mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+            <div class="grid md:grid-cols-3 gap-8 text-sm">
+                <div>
+                    <h3 class="font-semibold mb-3">Alamat Kantor</h3>
+                    <p class="text-indigo-100">
+                        Centennial Tower Lt. 42-45<br>
+                        Jl. Gatot Subroto Kav. 24-25<br>
+                        Jakarta 12930
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-3">Kontak</h3>
+                    <p class="text-indigo-100">Telepon: (021) 3193 6590</p>
+                    <p class="text-indigo-100">
+                        Email:
+                        <a href="mailto:humas@baktikominfo.id" class="underline hover:text-white">
+                            humas@baktikominfo.id
+                        </a>
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-3">Jam Operasional</h3>
+                    <p class="text-indigo-100">Senin - Jumat</p>
+                    <p class="text-indigo-100">08.00 - 17.00 WIB</p>
+                    <p class="text-indigo-100">Layanan Online: 24 Jam</p>
+                </div>
+            </div>
+
+            <div class="border-t border-white/20 mt-8 pt-4 text-center text-xs text-indigo-200">
+                © {{ date('Y') }} Simbakti - Bakti Komdigi. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
 @endsection

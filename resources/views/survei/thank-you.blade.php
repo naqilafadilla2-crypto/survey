@@ -78,27 +78,12 @@
                         </div>
                     </div>
 
-                    <!-- Countdown -->
-                    <div class="mb-8">
-                        <div class="inline-flex items-center gap-3 bg-blue-50 rounded-full px-6 py-3 border border-blue-200">
-                            <i data-lucide="clock" class="w-5 h-5 text-blue-600"></i>
-                            <span class="text-blue-800 font-medium">
-                                Kembali ke halaman utama dalam <span id="countdown" class="font-bold text-blue-900">5</span> detik
-                            </span>
-                        </div>
-                    </div>
-
                     <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-4 justify-center">
                         <a href="{{ route('survei.index') }}" 
                            class="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg">
                             <i data-lucide="home" class="w-5 h-5"></i>
                             Kembali ke Beranda
-                        </a>
-                        <a href="{{ route('survei.index') }}" 
-                           class="px-8 py-4 border-2 border-gray-300 hover:border-gray-400 text-gray-700 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2">
-                            <i data-lucide="clipboard-list" class="w-5 h-5"></i>
-                            Lihat Survei Lainnya
                         </a>
                     </div>
                 </div>
@@ -113,24 +98,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        lucide.createIcons();
-
-        // Countdown timer
-        let countdown = 5;
-        const countdownElement = document.getElementById('countdown');
-        const countdownInterval = setInterval(function() {
-            countdown--;
-            if (countdownElement) {
-                countdownElement.textContent = countdown;
-            }
-            
-            if (countdown <= 0) {
-                clearInterval(countdownInterval);
-                window.location.href = '{{ route("survei.index") }}';
-            }
-        }, 1000);
-    </script>
 </body>
 </html>

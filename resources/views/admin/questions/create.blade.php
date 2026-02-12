@@ -135,6 +135,17 @@
                                class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                placeholder="{{ $i === 0 ? 'Contoh: Ya' : ($i === 1 ? 'Contoh: Tidak' : 'Contoh: Mungkin' . ($i <= 8 ? ' (opsional)' : '')) }}">
                     @endfor
+                    <div class="flex items-center mt-3">
+    <input type="checkbox" 
+           name="allow_other" 
+           value="1"
+           {{ old('allow_other') ? 'checked' : '' }}
+           class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+    <label class="ml-2 text-sm text-gray-700">
+        Tambahkan opsi "Lainnya (Isian Teks)"
+    </label>
+</div>
+
                     @error('options')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
