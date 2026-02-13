@@ -400,7 +400,7 @@
     
     <!-- Footer -->
     <div class="footer">
-        <p><strong>Laporan ini dibuat secara otomatis oleh sistem SurveyApp</strong></p>
+        <p><strong>Laporan ini dibuat secara otomatis oleh SimBakti</strong></p>
         <p class="text-muted">Halaman 1 | Dihasilkan pada {{ now()->format('d F Y H:i:s') }}</p>
     </div>
 </body>

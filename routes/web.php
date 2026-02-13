@@ -52,6 +52,16 @@ Route::middleware(['auth', 'admin'])->group(function () {
         'destroy' => 'admin.konten-survei.destroy',
     ]);
 
+    // User management (admin)
+    Route::resource('admin/users', \App\Http\Controllers\Admin\UserController::class)->names([
+        'index' => 'admin.users.index',
+        'create' => 'admin.users.create',
+        'store' => 'admin.users.store',
+        'edit' => 'admin.users.edit',
+        'update' => 'admin.users.update',
+        'destroy' => 'admin.users.destroy',
+    ]);
+
     // Toggle status konten survei
     Route::patch('admin/konten-survei/{id}/toggle-status', [KontenSurveiController::class, 'toggleStatus'])->name('admin.konten-survei.toggle-status');
 
