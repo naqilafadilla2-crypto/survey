@@ -72,59 +72,5 @@
         @endif
     </div>
 
-         <!-- ================= FOOTER ================= -->
-    <footer class="bg-gradient-to-r from-indigo-700 to-purple-700 text-white mt-16">
-        <div class="max-w-6xl mx-auto px-6 py-12">
-
-            <!-- Grid Content -->
-            <div class="grid md:grid-cols-3 gap-10 text-sm">
-
-                <!-- Alamat -->
-                <div>
-                    <h3 class="font-semibold mb-4 text-white">Alamat Kantor</h3>
-                    <p class="text-indigo-100 leading-relaxed">
-                        Centennial Tower Lt. 42-45 <br>
-                        Jl. Gatot Subroto Kav. 24-25 <br>
-                        Jakarta 12930
-                    </p>
-                </div>
-
-                <!-- Kontak -->
-                <div>
-                    <h3 class="font-semibold mb-4 text-white">Kontak</h3>
-                    <p class="text-indigo-100 mb-2">
-                        Telepon: (021) 3193 6590
-                    </p>
-                    <p class="text-indigo-100">
-                        Email:
-                        <a href="mailto:humas@baktikominfo.id"
-                           class="underline hover:text-white transition-colors">
-                            humas@baktikominfo.id
-                        </a>
-                    </p>
-                </div>
-
-                <!-- Jam Operasional -->
-                <div>
-                    <h3 class="font-semibold mb-4 text-white">Jam Operasional</h3>
-                    <p class="text-indigo-100">Senin - Jumat</p>
-                    <p class="text-indigo-100">08.00 - 17.00 WIB</p>
-                    <p class="text-indigo-100">Layanan Online: 24 Jam</p>
-                </div>
-
-            </div>
-
-            <!-- Bottom Copyright -->
-            <div class="border-t border-white/20 mt-10 pt-6 text-center text-xs text-indigo-200">
-                © {{ date('Y') }} SimBakti - Bakti Komdigi. All rights reserved.
-            </div>
-
-        </div>
-    </footer>
-
-
-    <script>
-        lucide.createIcons();
-    </script>
 
 @endsection
