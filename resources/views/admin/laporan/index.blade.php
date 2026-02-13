@@ -90,65 +90,77 @@
     </div>
     @endif
 
+
     <!-- Summary Cards -->
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="glass-effect rounded-2xl p-6 card-hover border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Total Survei</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ $totalSurvei }}</p>
-                </div>
-                <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-full">
-                    <i data-lucide="clipboard-list" class="w-6 h-6 text-white"></i>
-                </div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+    <!-- Total Survei -->
+    <div class="glass-effect rounded-2xl p-6 card-hover border border-gray-100 shadow-sm h-full">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Total Survei</p>
+                <p class="text-3xl font-bold text-gray-900 mt-1">
+                    {{ $totalSurvei }}
+                </p>
             </div>
-            <div class="mt-4">
-                <div class="flex items-center text-sm">
-                    <i data-lucide="trending-up" class="w-4 h-4 text-green-500 mr-1"></i>
-                    <span class="text-green-500 font-medium">+15%</span>
-                    <span class="text-gray-500 ml-1">dari periode sebelumnya</span>
-                </div>
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-3 rounded-xl">
+                <i data-lucide="clipboard-list" class="w-6 h-6 text-white"></i>
             </div>
         </div>
 
-        <div class="glass-effect rounded-2xl p-6 card-hover border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Konten Aktif</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ $kontenAktif }}</p>
-                </div>
-                <div class="bg-gradient-to-r from-purple-500 to-pink-600 p-3 rounded-full">
-                    <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
-                </div>
-            </div>
-            <div class="mt-4">
-                <div class="flex items-center text-sm">
-                    <i data-lucide="activity" class="w-4 h-4 text-purple-500 mr-1"></i>
-                    <span class="text-purple-500 font-medium">{{ $kontenAktif }}</span>
-                    <span class="text-gray-500 ml-1">konten aktif</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-effect rounded-2xl p-6 card-hover border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Total Pegawai</p>
-                    <p class="text-3xl font-bold text-gray-900">{{ $totalPegawai }}</p>
-                </div>
-                <div class="bg-gradient-to-r from-orange-500 to-red-600 p-3 rounded-full">
-                    <i data-lucide="users" class="w-6 h-6 text-white"></i>
-                </div>
-            </div>
-            <div class="mt-4">
-                <div class="flex items-center text-sm">
-                    <i data-lucide="user-check" class="w-4 h-4 text-orange-500 mr-1"></i>
-                    <span class="text-orange-500 font-medium">100%</span>
-                    <span class="text-gray-500 ml-1">terdaftar</span>
-                </div>
-            </div>
+        <div class="mt-6 flex items-center text-sm">
+            <i data-lucide="trending-up" class="w-4 h-4 text-green-500 mr-2"></i>
+            <span class="text-green-500 font-semibold">+15%</span>
+            <span class="text-gray-500 ml-1">dari periode sebelumnya</span>
         </div>
     </div>
+
+    <!-- Konten Aktif -->
+    <div class="glass-effect rounded-2xl p-6 card-hover border border-gray-100 shadow-sm h-full">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Konten Aktif</p>
+                <p class="text-3xl font-bold text-gray-900 mt-1">
+                    {{ $kontenAktif }}
+                </p>
+            </div>
+            <div class="bg-gradient-to-r from-purple-500 to-pink-600 p-3 rounded-xl">
+                <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
+            </div>
+        </div>
+
+        <div class="mt-6 flex items-center text-sm">
+            <i data-lucide="activity" class="w-4 h-4 text-purple-500 mr-2"></i>
+            <span class="text-purple-600 font-semibold">
+                {{ $kontenAktif }}
+            </span>
+            <span class="text-gray-500 ml-1">konten aktif</span>
+        </div>
+    </div>
+
+    <!-- Total Pegawai -->
+    <div class="glass-effect rounded-2xl p-6 card-hover border border-gray-100 shadow-sm h-full">
+        <div class="flex items-start justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Total Pegawai</p>
+                <p class="text-3xl font-bold text-gray-900 mt-1">
+                    {{ $totalPegawai }}
+                </p>
+            </div>
+            <div class="bg-gradient-to-r from-orange-500 to-red-600 p-3 rounded-xl">
+                <i data-lucide="users" class="w-6 h-6 text-white"></i>
+            </div>
+        </div>
+
+        <div class="mt-6 flex items-center text-sm">
+            <i data-lucide="user-check" class="w-4 h-4 text-orange-500 mr-2"></i>
+            <span class="text-orange-500 font-semibold">100%</span>
+            <span class="text-gray-500 ml-1">terdaftar</span>
+        </div>
+    </div>
+
+</div>
+
 
     <!-- Charts Section -->
     <div class="grid {{ $modeFilter == 'public' ? 'lg:grid-cols-1' : 'lg:grid-cols-2' }} gap-8 mb-8">
